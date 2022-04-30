@@ -1,0 +1,25 @@
+.wave-logo{
+    width: var(--wave-logo-medium);
+}
+
+.logo-height{
+    height: 30px;
+}
+
+.full-width{
+    width: 100%;
+}
+
+.form-section{
+    display: flex;
+    justify-content: space-between;
+    margin-top: var(--form-section-space);
+}
+
+.form-section-space{
+    margin-top: var(--form-section-space);
+}
+
+.reset-password-input-buttom-padding{
+    padding-bottom: var(--form-section-space);
+}

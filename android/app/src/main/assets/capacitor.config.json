@@ -1,0 +1,13 @@
+{
+	"appId": "com.pinekown.we",
+	"appName": "Wave",
+	"webDir": "www",
+	"bundledWebRuntime": false,
+	"plugins": {
+		"Keyboard": {
+			"resize": "body",
+			"style": "light",
+			"resizeOnFullScreen": true
+		}
+	}
+}

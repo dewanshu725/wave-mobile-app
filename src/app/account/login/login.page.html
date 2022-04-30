@@ -1,0 +1,140 @@
+<ion-progress-bar [style.visibility]="loading ? 'visible' : 'hidden'" type="indeterminate" color="secondary"></ion-progress-bar>
+
+<ion-content *ngIf="!removeContent">
+  <ion-backdrop *ngIf="loading" class="loading-backdrop"></ion-backdrop>
+  <ion-grid [fixed]="true">
+    <ion-row class="ion-justify-content-center ion-margin-top logo-height">
+        <ion-img class="wave-logo"  [src]="wave_long_logo_url"></ion-img>
+    </ion-row>
+    <ion-row class="ion-justify-content-center ion-margin-top">
+      <ion-col size="10">
+        <p *ngIf="stepper.selectedIndex === 0" class="mat-title no-bottom-margin ion-text-center text-truncate">Login to Wave</p>
+
+        <ion-button *ngIf="stepper.selectedIndex === 1" class="mat-title no-bottom-margin" expand="full" fill="clear" color="dark"
+        (click)="stepper.previous()">
+          {{accountForm.get('login.username/email').value}}
+        </ion-button>
+
+        <p *ngIf="stepper.selectedIndex === 2" class="mat-title no-bottom-margin ion-text-center text-truncate">Reset Password</p>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <form novalidate class="ion-padding" [formGroup]="accountForm">
+    <mat-horizontal-stepper #stepper>
+      <mat-step formGroupName="login" [stepControl]="accountForm.get('login')">
+        <mat-form-field class="full-width" appearance="outline" [hideRequiredMarker]="true">
+          <mat-label>Username or Email</mat-label>
+          <input class="mat-subheading-2" matInput formControlName="username/email" type="text" 
+          maxlength="100" inputmode="email" enterkeyhint="next" spellcheck="false" 
+          (keyup.enter)="accountForm.get('login.username/email').valid ? verifyAccount(stepper) : null">
+
+          <mat-hint *ngIf="!accountInvalid">Enter your Username or Email to login</mat-hint>
+          <mat-hint *ngIf="accountInvalid">
+              Account is <strong class="my-mat-error">Invalid</strong>
+          </mat-hint>
+          <mat-error *ngIf="accountForm.get('login.username/email').hasError('required')">
+              This Field is <strong class="my-mat-error">required</strong>
+          </mat-error>
+        </mat-form-field>
+
+        <div class="form-section">
+          <ion-button expand="full" fill="clear" color="tertiary" [routerLink]="['/', 'account', 'signup']">Create Account</ion-button>
+          <ion-button class="no-ripple" color="primary" expand="block" (click)="verifyAccount(stepper)" 
+          [disabled]="accountForm.get('login.username/email').invalid">
+            Next
+          </ion-button>
+        </div>
+      </mat-step>
+      <mat-step formGroupName="login" [stepControl]="accountForm.get('login')">
+        <mat-form-field class="full-width" appearance="outline" [hideRequiredMarker]="true">
+          <mat-label>Password</mat-label>
+          <input matInput formControlName="password" type="password" maxlength="100" enterkeyhint="done" spellcheck="false"
+          (keyup.enter)="accountForm.get('login.password').valid ? loginFormSubmit() : null">
+
+          <mat-hint *ngIf="accountNotActivated && !accountForm.get('login.password').hasError('required')" class="my-mat-error">
+            Please activate your account by clicking the activation link sent on your registered email, then login
+          </mat-hint>
+          <mat-hint *ngIf="accountInvalidCredentials && !accountForm.get('login.password').hasError('required')">
+              Please enter <Strong class="my-mat-error">Correct Password</Strong>
+          </mat-hint>
+          <mat-error *ngIf="accountForm.get('login.password').hasError('required')">
+              This Field is <strong class="my-mat-error">required</strong>
+          </mat-error>
+        </mat-form-field>
+
+        <ion-item lines="none">
+          <ion-label>Remember Me</ion-label>
+          <ion-checkbox slot="end" color="primary" formControlName="keepMeLogined"></ion-checkbox>
+        </ion-item>
+
+        <div class="form-section">
+          <ion-button expand="full" fill="clear" color="tertiary" (click)="sendPasswordResetOtp(stepper)">
+            Forgot Password?
+          </ion-button>
+          <ion-button class="no-ripple" color="primary" expand="block" (click)="loginFormSubmit()"
+          [disabled]="accountForm.get('login.password').invalid">
+            Login
+          </ion-button>
+        </div>
+      </mat-step>
+      <mat-step formGroupName="resetPassword" [stepControl]="accountForm.get('resetPassword')">
+        <mat-form-field class="full-width reset-password-input-buttom-padding" appearance="outline" [hideRequiredMarker]="true">
+          <mat-label>OTP</mat-label>
+          <input matInput formControlName="otp" type="number" maxlength="6" enterkeyhint="done" spellcheck="false"
+          (keyup.enter)="keyboardAction()">
+          <mat-hint *ngIf="!otpInvalid">
+              Please enter the OTP sent to your registered email for verifying your identity. OTP expires in 15 minutes.
+          </mat-hint>
+
+          <mat-hint *ngIf="otpInvalid" class="my-mat-error">Please enter a valid OTP</mat-hint>
+
+          <mat-error *ngIf="accountForm.get('resetPassword.otp').hasError('required')">
+              OTP is <strong class="my-mat-error">required</strong>
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="full-width reset-password-input-buttom-padding" appearance="outline" [hideRequiredMarker]="true">
+          <mat-label>New Password</mat-label>
+          <input matInput formControlName="password" type="password" maxlength="100" enterkeyhint="done" spellcheck="false"
+          (keyup.enter)="keyboardAction()">
+          <mat-hint>Create a new password by using 8 or more characters with a mix of letters, numbers & symbols</mat-hint>
+
+          <mat-error *ngIf="accountForm.get('resetPassword.password').hasError('pattern') && !accountForm.get('resetPassword.password').hasError('required')">
+              password must be 8 or more characters long with a mix of <strong class="my-mat-error">letters, numbers & symbols</strong>
+          </mat-error>
+
+          <mat-error *ngIf="accountForm.get('resetPassword.password').hasError('required')">
+              Password is <strong class="my-mat-error">required</strong>
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="full-width" appearance="outline" [hideRequiredMarker]="true">
+          <mat-label>Confirm Password</mat-label>
+          <input matInput formControlName="confirmPassword" [type]="confirmPasswordHidden ? 'password' : 'text'"
+          maxlength="100" enterkeyhint="done" spellcheck="false" (keyup.enter)="keyboardAction()">
+          <button mat-icon-button matSuffix disableRipple type="button" (click)="confirmPasswordHidden = !confirmPasswordHidden">
+              <mat-icon>{{confirmPasswordHidden ? 'visibility_off' : 'visibility'}}</mat-icon>
+          </button>
+
+          <mat-hint *ngIf="accountForm.get('resetPassword').hasError('misMatch') && !accountForm.get('resetPassword.confirmPassword').hasError('required')">
+              Password <strong class="my-mat-error">Does Not Match</strong>
+          </mat-hint>
+          <mat-error *ngIf="accountForm.get('resetPassword.confirmPassword').hasError('required')">
+              Confirm Password is <strong class="my-mat-error">required</strong>
+          </mat-error>
+        </mat-form-field>
+
+        <div class="form-section">
+          <ion-button shape="round" expand="block" fill="clear" color="dark" (click)="stepper.previous()">
+            <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+          </ion-button>
+          <ion-button class="no-ripple" color="primary" expand="block" (click)="resetPassword(stepper)"
+          [disabled]="accountForm.get('resetPassword').invalid">
+            Reset Password
+          </ion-button>
+        </div>
+      </mat-step>
+    </mat-horizontal-stepper>
+  </form>
+</ion-content>

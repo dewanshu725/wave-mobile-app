@@ -1,0 +1,61 @@
+<div>
+  <ion-item-divider></ion-item-divider>
+  <div class="ion-padding">
+    <div class="info-container ion-margin-bottom">
+      <div class="info-content-group">
+        <div *ngIf="vue.special" class="info-content-container ion-margin-end">
+          <ion-icon color="warning" name="star"></ion-icon>
+        </div>
+        <div class="info-content-container ion-margin-end">
+          <ion-icon color="medium" name="location-sharp"></ion-icon>
+          <span class="mat-caption no-bottom-margin" style="margin-left: 4px;">{{vue.location}}</span>
+        </div>
+        <div class="info-content-container">
+          <mat-icon class="mat-icon-style">cake</mat-icon>
+          <span class="mat-caption no-bottom-margin" style="margin-left: 4px;">{{vue.age}}</span>
+        </div>
+      </div>
+
+      <ion-chip class="no-ripple ion-chip-small" color="tertiary" mode="ios" (click)="open.emit(vue)">OPEN</ion-chip>
+    </div>
+
+    <div class="overflow-wrapper">
+      <div class="info-content-group">
+        <ng-container *ngIf="vue.url !== null">
+          <ion-chip class="link-chip ion-chip-small" mode="ios">
+            <ion-icon class="link-icon" name="link-outline"></ion-icon>
+            <ion-label>{{vue.site_name ? vue.site_name : vue.domain_name}}</ion-label>
+          </ion-chip>
+          <span class="mat-caption vertical-divider">|</span>
+        </ng-container>
+
+        <ion-chip color="medium" class="ion-chip-small" mode="ios" *ngFor="let interest of vue.interest_keyword">
+          {{interest.name}}
+        </ion-chip>
+      </div>
+    </div>
+  </div>
+
+  <div (click)="open.emit(vue)">
+    <div *ngIf="vue.image !== null" class="img-container">
+      <img
+      ImgErrhandler
+      [thumnailUrl]="vue.image.thumnail"
+      [imgUrl]="vue.image.image"
+      [imgWidth]="vue.image.width"
+      [imgHeight]="vue.image.height"
+      (imgError)="onImgErr($event)"
+      >
+      <div class="img-retry-container" *ngIf="imgError">
+        <ion-button expand="block" size="large" color="light" shape="round" mode="ios" (click)="imgRetry()">
+          <ion-icon slot="icon-only" name="reload"></ion-icon>
+        </ion-button>
+      </div>
+    </div>
+  
+    <div [ngClass]="vue.image !== null ? 'ion-padding' : 'ion-padding-horizontal ion-padding-bottom'">
+      <p class="mat-body-2"><strong>{{truncatedTitle}}</strong></p>
+      <span class="mat-body-2 no-bottom-margin">{{truncatedDescription}}</span>
+    </div>
+  </div>
+</div>

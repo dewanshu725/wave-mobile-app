@@ -1,0 +1,82 @@
+.wave-logo{
+    width: var(--wave-logo-medium);
+}
+
+.logo-height{
+    height: 30px;
+}
+
+.hero-image{
+    height: 25vh;
+}
+
+.full-width{
+    width: 100%;
+}
+
+.form-section{
+    display: flex;
+    justify-content: space-between;
+    margin-top: var(--form-section-space);
+}
+
+.form-section-space{
+    margin-top: var(--form-section-space);
+}
+
+.form-nav-section{
+    display: flex;
+    justify-content: space-between;
+}
+
+.input-buttom-padding{
+    padding-bottom: var(--form-section-space);
+}
+
+.modal-calender{
+    --width: 80%;
+    --height: 390px;
+    --border-radius: 8px;
+}
+
+.select-input-style{
+    border: solid rgba(0, 0, 0, 0.12) 0.1px;
+    border-radius: 5px;
+}
+
+.center-item-container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.interest-category-container{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.interest-category-button{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1rem;
+    margin-bottom: 24px;
+    line-height: 1.5rem;
+    padding: 0.5rem 1rem;
+    color: var(--ion-color-secondary-contrast);
+    background-color: var(--ion-color-secondary-tint);
+}
+
+.interest-container{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.policy-link{
+    text-decoration: underline;
+    font-weight: 600;
+    color: var(--ion-color-tertiary);
+    cursor: pointer;
+}

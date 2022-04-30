@@ -1,0 +1,17 @@
+.interest-category-container{
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.interest-container{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+ion-item-divider{
+    --padding-start: 0px;
+    min-height: 0px;
+    height: 1px;
+}

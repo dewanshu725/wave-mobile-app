@@ -1,0 +1,267 @@
+<ion-progress-bar [style.visibility]="loading || locationLoading || usernameChecked === null || emailChecked === null ?
+'visible' : 'hidden'" type="indeterminate" color="secondary"></ion-progress-bar>
+
+<ion-content *ngIf="!removeContent">
+  <ion-backdrop *ngIf="loading" class="loading-backdrop"></ion-backdrop>
+
+  <ion-grid [fixed]="true">
+    <ion-row class="ion-justify-content-center ion-margin-top logo-height">
+        <ion-img class="logo-height"  [src]="wave_long_logo_url"></ion-img>
+    </ion-row>
+    <ion-row class="ion-justify-content-center ion-margin-top">
+      <ion-col size="10">
+        <p *ngIf="stepper.selectedIndex === 0" 
+        class="mat-title no-bottom-margin ion-text-center text-truncate">
+          Create Account
+        </p>
+
+        <p *ngIf="stepper.selectedIndex === 1" 
+        class="mat-title no-bottom-margin ion-text-center text-truncate">
+          Create Login Credentials
+        </p>
+
+        <div *ngIf="stepper.selectedIndex === 2" class="center-item-container">
+          <p class="mat-title no-bottom-margin text-truncate">Choose your Interests</p>
+          <div class="dot" style="margin: 0 0.5rem;"></div>
+          <p class="mat-title no-bottom-margin">{{interestSelectedCount}}</p>
+        </div>
+
+        <p *ngIf="stepper.selectedIndex === 3"
+        class="mat-title no-bottom-margin ion-text-center text-truncate">
+          Read our terms
+        </p>
+
+        <p *ngIf="stepper.selectedIndex === 4" 
+        class="mat-title no-bottom-margin ion-text-center text-truncate">
+          Verify your Email
+        </p>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <form novalidate class="ion-padding" [formGroup]="signupForm">
+    <mat-horizontal-stepper #stepper (selectionChange)="stepperChanged($event.selectedIndex)">
+      <mat-step formGroupName="personalDetails" [stepControl]="signupForm.get('personalDetails')">
+        <mat-form-field class="full-width input-buttom-padding" appearance="outline" [hideRequiredMarker]="true">
+          <mat-label>Full Name</mat-label>
+          <input matInput formControlName="fullname" type="text" maxlength="50" spellcheck="false" (keyup.enter)="keyboardAction()">
+          <mat-hint class="mat-hint">We will use it as your Official Name</mat-hint>
+
+          <mat-error *ngIf="signupForm.get('personalDetails.fullname').hasError('pattern') && !signupForm.get('personalDetails.fullname').hasError('required')">
+              Only Alphabets are <strong class="my-mat-error">allowed</strong>
+          </mat-error>
+          <mat-error *ngIf="signupForm.get('personalDetails.fullname').hasError('required')">
+              Full Name is <strong class="my-mat-error">required</strong>
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="full-width input-buttom-padding" appearance="outline" [hideRequiredMarker]="true">
+          <mat-label>Nick Name</mat-label>
+          <input matInput formControlName="nickname" type="text" maxlength="50" spellcheck="false" (keyup.enter)="keyboardAction()">
+          <mat-hint class="mat-hint">Give yourself a Nickname that describes you the Best</mat-hint>
+
+          <mat-error *ngIf="signupForm.get('personalDetails.nickname').hasError('pattern') && !signupForm.get('personalDetails.nickname').hasError('required')">
+              Only Alphabets are <strong class="my-mat-error">allowed</strong>
+          </mat-error>
+          <mat-error *ngIf="signupForm.get('personalDetails.nickname').hasError('required')">
+              Nick Name is <strong class="my-mat-error">required</strong>
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="full-width disabled-form-field input-buttom-padding" appearance="outline" floatLabel="always" [hideRequiredMarker]="true">
+          <mat-label>Birthday</mat-label>
+          <input matInput formControlName="dob" type="text" placeholder="Select your birthday" [min]="minYear" [max]="maxYear"
+          [matDatepicker]="datepicker">
+          <mat-datepicker-toggle matSuffix [for]="datepicker" (click)="keyboardAction()"></mat-datepicker-toggle>
+          <mat-datepicker #datepicker touchUi disabled="false" startView="multi-year"></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field class="full-width disabled-form-field input-buttom-padding" appearance="outline" floatLabel="always" [hideRequiredMarker]="true">
+          <mat-label>Location</mat-label>
+          <input matInput formControlName="location" placeholder="Get your location..." type="text" spellcheck="false">
+          <mat-hint *ngIf="locationLoading === false">
+            <span>if your location is inaccurate, use </span>
+            <mat-icon style="position: absolute; padding-top: 1px; padding-left: 4px;">gps_fixed</mat-icon>
+          </mat-hint>
+          <mat-hint *ngIf="locationLoading === null">
+              Unable to <strong class="my-mat-error">get your location</strong>
+          </mat-hint>
+          <button *ngIf="locationLoading === false" mat-icon-button matSuffix type="button" [disabled]="locationLoading" (click)="getLocation(true)">
+              <mat-icon>my_location</mat-icon>
+          </button>
+          <button *ngIf="locationLoading === null" mat-icon-button matSuffix type="button" [disabled]="locationLoading" (click)="getLocation(true)">
+              <mat-icon>share_location</mat-icon>
+          </button>
+        </mat-form-field>
+
+        <ion-item lines="none" class="select-input-style">
+          <ion-label>Gender</ion-label>
+          <ion-select interface="action-sheet" (ionChange)="getGender($event)">
+            <ion-select-option value="male">Male</ion-select-option>
+            <ion-select-option value="female">Female</ion-select-option>
+            <ion-select-option value="non-binary">Non Binary</ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <div class="form-section">
+          <ion-button expand="full" fill="clear" color="tertiary" [routerLink]="['/', 'account', 'login']">
+            Login Instead
+          </ion-button>
+          <ion-button id="open-modal" class="no-ripple" color="primary" expand="block" (click)="stepper.next()"
+          [disabled]="signupForm.get('personalDetails').invalid || locationData === null">
+            Next
+          </ion-button>
+        </div>
+      </mat-step>
+
+      <mat-step formGroupName="loginDetails" [stepControl]="signupForm.get('loginDetails')">
+        <mat-form-field class="full-width input-buttom-padding" appearance="outline" [hideRequiredMarker]="true">
+          <mat-label>User Name</mat-label>
+            <input matInput formControlName="username" type="text" maxlength="50" spellcheck="false">
+
+            <mat-hint class="mat-hint">Use a mix of letters & numbers</mat-hint>
+            <mat-icon class="my-mat-success" *ngIf="usernameChecked && !signupForm.get('loginDetails.username').invalid" matSuffix>
+                done_outline
+            </mat-icon>
+            <mat-error *ngIf="signupForm.get('loginDetails.username').hasError('usernameTaken'); else usernameError">
+                This <strong class="my-mat-error">Username is Taken</strong>
+            </mat-error>
+            <ng-template #usernameError>
+                <mat-error *ngIf="signupForm.get('loginDetails.username').hasError('required')">
+                    Username is <strong class="my-mat-error">required</strong>
+                </mat-error>
+                <mat-error *ngIf="signupForm.get('loginDetails.username').hasError('pattern') && !signupForm.get('loginDetails.username').hasError('required')">
+                    Only a mix of <strong class="my-mat-error">letters & numbers are allowed</strong>
+                </mat-error>
+            </ng-template>
+        </mat-form-field>
+
+        <mat-form-field class="full-width input-buttom-padding" appearance="outline" [hideRequiredMarker]="true">
+          <mat-label>Email</mat-label>
+          <input matInput formControlName="email" type="email" spellcheck="false">
+          <mat-hint class="mat-hint">Use your valid email</mat-hint>
+          <mat-icon class="my-mat-success" *ngIf="emailChecked && !signupForm.get('loginDetails.email').invalid" matSuffix>
+              done_outline
+          </mat-icon>
+          <mat-error *ngIf="signupForm.get('loginDetails.email').hasError('emailTaken'); else emailError">
+              This Email is <strong class="my-mat-error">Already Registered</strong>
+          </mat-error>
+          <ng-template #emailError>
+            <mat-error *ngIf="signupForm.get('loginDetails.email').hasError('required')">
+              Email is <strong class="my-mat-error">required</strong>
+            </mat-error>
+            <mat-error *ngIf="signupForm.get('loginDetails.email').hasError('pattern') && !signupForm.get('loginDetails.email').hasError('required')">
+              Enter a <strong class="my-mat-error">Valid Email</strong>
+            </mat-error>
+          </ng-template>
+        </mat-form-field>
+
+        <mat-form-field class="full-width input-buttom-padding" appearance="outline" [hideRequiredMarker]="true">
+          <mat-label>Password</mat-label>
+          <input matInput formControlName="password" type="password">
+          <mat-hint class="mat-hint">Use 8 or more characters with a mix of letters, numbers & symbols</mat-hint>
+          <mat-error *ngIf="signupForm.get('loginDetails.password').hasError('required')">
+              Password is <strong class="my-mat-error">required</strong>
+          </mat-error>
+          <mat-error *ngIf="signupForm.get('loginDetails.password').hasError('pattern') && !signupForm.get('loginDetails.password').hasError('required')">
+              password must be 8 or more characters long with a mix of <strong class="my-mat-error">letters, numbers & symbols</strong>
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="full-width input-buttom-padding" appearance="outline" [hideRequiredMarker]="true">
+          <mat-label>Confirm Password</mat-label>
+          <input matInput formControlName="confirmPassword" [type]="confirmPasswordHidden ? 'password' : 'text'" spellcheck="false">
+          <button mat-icon-button matSuffix type="button" (click)="confirmPasswordHidden = !confirmPasswordHidden">
+              <mat-icon>{{confirmPasswordHidden ? 'visibility_off' : 'visibility'}}</mat-icon>
+          </button>
+
+          <mat-hint *ngIf="signupForm.get('loginDetails').hasError('misMatch') && !signupForm.get('loginDetails.confirmPassword').hasError('required')">
+              Password <strong class="my-mat-error">Does Not Match</strong>
+          </mat-hint>
+          <mat-error *ngIf="signupForm.get('loginDetails.confirmPassword').hasError('required')">
+              Confirm Password is <strong class="my-mat-error">required</strong>
+          </mat-error>
+        </mat-form-field>
+
+        <div class="form-nav-section">
+          <ion-button shape="round" expand="block" fill="clear" color="dark" (click)="stepper.previous()">
+            <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+          </ion-button>
+          <ion-button class="no-ripple" color="primary" expand="block" (click)="stepperNext(stepper)"
+          [disabled]="signupForm.get('loginDetails').invalid || usernameChecked !== true || emailChecked !== true">
+            Next
+          </ion-button>
+        </div>
+      </mat-step>
+
+      <mat-step>
+        <div class="interest-category-container">
+          <button class="interest-category-button" mat-flat-button  
+          *ngFor="let category of interestCategory" (click)="selectCategory(category)">
+            {{category.name}}
+          </button>
+        </div>
+
+        <div class="form-section">
+          <ion-button shape="round" expand="block" fill="clear" color="dark" (click)="stepper.previous()">
+            <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+          </ion-button>
+          <ion-button class="no-ripple" color="primary" expand="block" (click)="stepper.next()"
+          [disabled]="interestSelectedCount === 0">
+            Next
+          </ion-button>
+        </div>
+      </mat-step>
+
+      <mat-step>
+        <p class="mat-subheading-1 no-bottom-margin">
+          By creating your account on Wave, you acknowledge that you have read and agree to the 
+          <a class="policy-link" (click)="openBrowser(terms_and_conditions_url)">Terms & Conditions</a> and 
+          <a class="policy-link" (click)="openBrowser(privacy_policy_url)">Privacy Policy</a> of Wave Platform.
+        </p>
+
+        <div class="form-section">
+          <ion-button shape="round" expand="block" fill="clear" color="dark" (click)="stepper.previous()">
+            <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+          </ion-button>
+          <ion-button class="no-ripple" color="primary" expand="block" (click)="signupFormSubmit(stepper)">
+            Create Account
+          </ion-button>
+        </div>
+      </mat-step>
+
+      <mat-step>
+        <ion-grid [fixed]="true">
+          <ion-row class="ion-justify-content-center hero-image">
+            <ion-img class="hero-image"  [src]="email_send_url"></ion-img>
+          </ion-row>
+          <ion-row class="ion-justify-content-center form-section-space">
+            <ion-col size="10">
+              <p class="mat-subheading-1 no-bottom-margin">
+                We have sent an activation link to your email. Open the link to activate your account and login.
+              </p>
+
+              <ion-button class="no-ripple ion-margin-top" color="primary" expand="block" [routerLink]="['/', 'account', 'login']">
+                Login
+              </ion-button>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </mat-step>
+    </mat-horizontal-stepper>
+  </form>
+</ion-content>
+
+<ion-modal [isOpen]="interestView" [breakpoints]="[.35, .5, .8]" [initialBreakpoint]=".35" mode="ios"
+(didDismiss)="interestView = false">
+  <ng-template>
+    <ion-content class="ion-padding">
+      <div class="interest-container ion-margin-top">
+        <ion-chip class="no-ripple" *ngFor="let interest of selectedCategory.interest_keyword" (click)="selectInterest(interest)"
+        [ngClass]="interest.selected ? 'selected-interest' : 'unselected-interest'">
+          <ion-label>{{interest.name}}</ion-label>
+        </ion-chip>
+      </div>
+    </ion-content>
+  </ng-template>
+</ion-modal>

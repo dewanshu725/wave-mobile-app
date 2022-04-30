@@ -1,0 +1,21 @@
+<ion-header mode="md">
+  <ion-toolbar>
+    <ion-title>Your Interest</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="presentModal()">
+        <ion-icon slot="icon-only" name="options-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="interest-container">
+    <ng-container *ngFor="let interest of studentInterest">
+      <ion-chip *ngIf="interest.saved" class="no-ripple" (click)="interestClicked(interest)"
+      [ngClass]="interest.selected ? 'selected-interest' : 'unselected-interest'">
+        <ion-label>{{interest.name}}</ion-label>
+      </ion-chip>
+    </ng-container>
+  </div>
+</ion-content>

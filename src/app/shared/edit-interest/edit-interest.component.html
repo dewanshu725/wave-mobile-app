@@ -1,0 +1,35 @@
+<ion-progress-bar [style.visibility]="InterestSaving ? 'visible' : 'hidden'" type="indeterminate" color="secondary"></ion-progress-bar>
+
+<ion-header mode="md">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="closeModal()">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+    <ion-title>Choose Interest</ion-title>
+
+    <ion-buttons slot="end">
+      <ion-button color="primary" [disabled]="(interestSelectionCounter>0 && interestChanged) || InterestSaving ? false : true"
+        (click)="saveInterest()">
+        <ion-icon slot="icon-only" name="save"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="interest-category-container" *ngFor="let interestCategory of allInterestCategory; let last=last;">
+    <p class="mat-subheading-1"><strong>{{interestCategory.name}}</strong></p>
+
+    <div class="interest-container">
+      <ion-chip class="no-ripple" *ngFor="let interest of interestCategory.interest_keyword" (click)="interestClicked(interest)"
+      [ngClass]="interest.selected ? 'selected-interest' : 'unselected-interest'">
+        <ion-label>{{interest.name}}</ion-label>
+      </ion-chip>
+    </div>
+
+    <ion-item-divider *ngIf="!last" class="ion-margin-vertical"></ion-item-divider>
+  </div>
+</ion-content>

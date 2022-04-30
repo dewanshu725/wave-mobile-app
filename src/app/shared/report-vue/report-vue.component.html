@@ -1,0 +1,42 @@
+<ion-content class="ion-padding">
+    <p class="mat-body-2 header">Select your reasons for reporting this vue</p>
+
+    <ion-list>
+        <ion-item lines="full">
+            <ion-label>Misleading</ion-label>
+            <ion-checkbox slot="start" color="danger" value="misleading" [checked]="report.misleading" (ionChange)="isChecked($event)">
+            </ion-checkbox>
+        </ion-item>
+        <ion-item lines="full">
+            <ion-label>Clickbait</ion-label>
+            <ion-checkbox slot="start" color="danger" value="clickbait" [checked]="report.clickbait" (ionChange)="isChecked($event)">
+            </ion-checkbox>
+        </ion-item>
+        <ion-item lines="full">
+            <ion-label>Adult Content</ion-label>
+            <ion-checkbox slot="start" color="danger" value="adult" [checked]="report.adult" (ionChange)="isChecked($event)">
+            </ion-checkbox>
+        </ion-item>
+        <ion-item lines="full">
+            <ion-label>Shopping Content</ion-label>
+            <ion-checkbox slot="start" color="danger" value="shopping" [checked]="report.shopping" (ionChange)="isChecked($event)">
+            </ion-checkbox>
+        </ion-item>
+        <ion-item lines="full">
+            <ion-label>Gambling Content</ion-label>
+            <ion-checkbox slot="start" color="danger" value="gambling" [checked]="report.gambling" (ionChange)="isChecked($event)">
+            </ion-checkbox>
+        </ion-item>
+        <ion-item lines="full">
+            <ion-label>Dangerous Content</ion-label>
+            <ion-checkbox slot="start" color="danger" value="dangerous" [checked]="report.dangerous" (ionChange)="isChecked($event)">
+            </ion-checkbox>
+        </ion-item>
+        <ion-item lines="full">
+            <ion-label>Other</ion-label>
+            <ion-checkbox slot="start" color="danger" value="other" [checked]="report.other" (ionChange)="isChecked($event)"></ion-checkbox>
+        </ion-item>
+    </ion-list>
+
+    <ion-button class="ion-margin-top" expand="block" fill="solid" color="danger" (click)="submitReport()">REPORT</ion-button>
+</ion-content>

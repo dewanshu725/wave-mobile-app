@@ -1,0 +1,82 @@
+<ion-header class="ion-no-border" mode="md">
+  <ion-toolbar>
+    <ion-title>Saved</ion-title>
+
+    <ion-buttons *ngIf="doesSpecialVueExist" slot="end">
+      <ion-button (click)="specialVueFilter = !specialVueFilter">
+        <ion-icon slot="icon-only" [color]="specialVueFilter ? 'warning' : null" 
+        [name]="specialVueFilter ? 'star' : 'star-outline'"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+
+  <ion-toolbar>
+    <ion-title *ngIf="currentSelectedInterest.length === 0" class="mat-subheading-1 no-bottom-margin">Filter by Interest</ion-title>
+
+    <div *ngIf="currentSelectedInterest.length !== 0" class="selected-interest-wrapper">
+      <div class="selected-interest-container">
+        <ion-chip class="selected-interest no-ripple" *ngFor="let interest of currentSelectedInterest" (click)="removeInterest(interest)">
+          <ion-label>{{interest.name}}</ion-label>
+          <ion-icon color="light" name="close-circle"></ion-icon>
+        </ion-chip>
+      </div>
+    </div>
+
+    <ion-buttons slot="end">
+      <ion-button [disabled]="loading" (click)="presentModal()">
+        <ion-icon slot="icon-only" name="filter"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [hidden]="currentSelectedInterest.length !== 0" [fullscreen]="false" [scrollEvents]="false">
+  <ion-grid *ngIf="vueFeedArray.length === 0" class="full-size">
+    <ion-row *ngIf="loading" class="loading-container full-size ion-justify-content-center ion-align-items-center">
+      <ion-spinner class="ion-margin-bottom" name="bubbles"></ion-spinner>
+      <p class="subheading-2 loading-text">Loading Vue...</p>
+    </ion-row>
+    <ion-row *ngIf="vueError" class="loading-container full-size ion-justify-content-center ion-align-items-center">
+      <ion-button color="danger" expand="block" fill="solid" mode="ios" (click)="getVueFeed()">
+        <ion-icon slot="start" name="refresh-outline"></ion-icon>
+        Try Again
+      </ion-button>
+    </ion-row>
+    <ion-row *ngIf="!loading && !vueError" class="loading-container full-size ion-justify-content-center ion-align-items-center">
+      <ion-icon class="ion-margin-bottom" name="file-tray-outline" size="large"></ion-icon>
+      <p class="subheading-2 loading-text">No Vue Saved Yet</p>
+    </ion-row>
+  </ion-grid>
+
+  <ng-container *ngIf="vueFeedArray.length !== 0">
+    <ng-container *ngFor="let vue of vueFeedArray">
+      <ng-container *ngIf="specialVueFilter && vue.special">
+        <app-display-vue [vue]="vue" (open)="openVueModal(vue)"></app-display-vue>
+      </ng-container>
+      <app-display-vue *ngIf="!specialVueFilter" [vue]="vue" (open)="openVueModal(vue)"></app-display-vue>
+    </ng-container>
+  
+    <ion-infinite-scroll *ngIf="!specialVueFilter" threshold="100px" position="bottom" (ionInfinite)="loadMore($event)">
+      <ion-infinite-scroll-content loadingSpinner="dots" loadingText="Loading more data..."></ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+  </ng-container>
+</ion-content>
+
+
+<ion-content *ngIf="currentSelectedInterest.length !== 0" [fullscreen]="false" [scrollEvents]="false">
+  <ion-grid *ngIf="filteredVueFeedArray.length === 0" class="full-size">
+    <ion-row class="loading-container full-size ion-justify-content-center ion-align-items-center">
+      <ion-icon class="ion-margin-bottom" name="file-tray-outline" size="large"></ion-icon>
+      <p class="subheading-2 loading-text">No Matching Vues Found</p>
+    </ion-row>
+  </ion-grid>
+
+  <ng-container *ngIf="filteredVueFeedArray.length !== 0">
+    <ng-container *ngFor="let vue of filteredVueFeedArray">
+      <ng-container *ngIf="specialVueFilter && vue.special">
+        <app-display-vue [vue]="vue" (open)="openVueModal(vue)"></app-display-vue>
+      </ng-container>
+      <app-display-vue *ngIf="!specialVueFilter" [vue]="vue" (open)="openVueModal(vue)"></app-display-vue>
+    </ng-container>
+  </ng-container>
+</ion-content>
